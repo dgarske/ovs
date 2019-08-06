@@ -18,6 +18,10 @@
 
 #include <stdbool.h>
 
+#ifdef HAVE_WOLFSSL
+    #include <wolfssl/options.h>
+#endif
+
 bool stream_ssl_is_configured(void);
 void stream_ssl_set_private_key_file(const char *file_name);
 void stream_ssl_set_certificate_file(const char *file_name);
