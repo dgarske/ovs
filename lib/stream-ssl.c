@@ -26,6 +26,7 @@
 #include <netinet/tcp.h>
 #ifdef HAVE_WOLFSSL
 #include <wolfssl/options.h>
+#include <wolfssl/wolfcrypt/logging.h>
 #include <openssl/pem.h>
 #endif
 #include <openssl/err.h>
@@ -1004,6 +1005,9 @@ do_ssl_init(void)
 {
     SSL_METHOD *method;
 
+#ifdef DEBUG_WOLFSSL
+    wolfSSL_Debugging_ON();
+#endif
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined (LIBRESSL_VERSION_NUMBER)
 #ifdef _WIN32
     /* The following call is needed if we "#include <openssl/applink.c>". */

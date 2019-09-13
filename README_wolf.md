@@ -13,7 +13,7 @@ cd wolfssl
 ./configure --enable-opensslall --enable-keygen --enable-rsapss --enable-aesccm \
     --enable-aesctr --enable-des3 --enable-camellia --enable-curve25519 --enable-ed25519 \
     --enable-sessioncerts \
-    CFLAGS="-DWOLFSSL_PUBLIC_MP -DWOLFSSL_DES_ECB"
+    CFLAGS="-DWOLFSSL_LOG_PRINTF -DWOLFSSL_PUBLIC_MP -DWOLFSSL_DES_ECB"
 make
 make check
 sudo make install
@@ -61,13 +61,12 @@ PASS: libstrongswan_tests
 ```sh
 git clone https://github.com/openvswitch/ovs.git
 cd ovs
-git checkout wolf
 
 ./boot.sh
 ./configure --with-wolfssl
 make
-make check
 sudo make install
+sudo make check
 ```
 
 Note: Contribution PR for OVS with wolfSSL is here: https://github.com/dgarske/ovs/tree/wolf
@@ -78,10 +77,56 @@ Test instructions:
 http://docs.openvswitch.org/en/latest/topics/testing/
 
 ```
-make check
+sudo make check
+
+## ------------------------------- ##
+## openvswitch 2.12.90 test suite. ##
+## ------------------------------- ##
+
+appctl bashcomp unit tests
+
+  1: appctl-bashcomp - basic verification            ok
+  2: appctl-bashcomp - complex completion check 1    ok
 ...
-2408 tests were successful.
-383 tests were skipped.
+
+## ------------- ##
+## Test results. ##
+## ------------- ##
+
+ERROR: 2449 tests were run,
+39 failed unexpectedly.
+342 tests were skipped.
+## -------------------------- ##
+## testsuite.log was created. ##
+## -------------------------- ##
+
+Please send `tests/testsuite.log' and all information you think might help:
+
+   To: <bugs@openvswitch.org>
+   Subject: [openvswitch 2.12.90] testsuite: 542 543 544 545 546 547 1921 1927 1928 1929 1930 1931 1932 1933 1934 1935 1936 1937 1938 1939 1940 1941 1942 1943 1944 1945 1946 1947 1948 1949 1950 1951 1952 2456 2500 2501 2658 2659 2660 failed
+```
+
+#### Debugging Tests
+
+Running a single test:
+
+```sh
+OVS_PAUSE_TEST=1 make check TESTSUITEFLAGS='-v 542'
+```
+
+Debugging a single test:
+In `./tests/testsuite.dir/[testnum]/run` find command used.
+
+```sh
+cd tests
+sudo ./testsuite -v -d  AUTOTEST_PATH='utilities:vswitchd:ovsdb:vtep:tests:::ovn/controller-vtep:ovn/northd:ovn/utilities:ovn/controller' 1
+```
+
+Enabling debug output to console:
+
+```sh
+sudo ovs-appctl vlog/list
+sudo ovs-appctl vlog/set ANY:console:dbg
 ```
 
 
